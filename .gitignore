@@ -1,0 +1,13 @@
+################################################################
+#                                                              #
+# .gitignore file for opennms-provisione                       #
+#                                                              #
+################################################################
+
+# ignore byte-compiled files
+*.pyo
+*.pyc
+__pycache__/
+
+# directory for virtualenv
+env/
