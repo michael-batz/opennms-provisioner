@@ -18,8 +18,13 @@ def main():
     # testing
     testnode = opennms.Node("testnode.example.net", "1")
     testnode.add_interface("127.0.0.1")
+    testnode.add_asset("city", "Fulda")
+    testnode.add_asset("zip", "36041")
     testnode.add_category("Test")
-    print(testnode)
+    print(testnode.get_xml_string())
+    testrequisition = opennms.Requisition("test")
+    testrequisition.add_node(testnode)
+    print(testrequisition.get_xml_string())
 
 
 if __name__ == "__main__":
