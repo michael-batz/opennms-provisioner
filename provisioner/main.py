@@ -9,22 +9,19 @@ This is the main module of opennms-provisioner
 """
 
 import sys
-import opennms
+import config
+import executor
 
 def main():
     """main function"""
-    print("Sample Project")
 
-    # testing
-    testnode = opennms.Node("testnode.example.net", "1")
-    testnode.add_interface("127.0.0.1")
-    testnode.add_asset("city", "Fulda")
-    testnode.add_asset("zip", "36041")
-    testnode.add_category("Test")
-    print(testnode.get_xml_string())
-    testrequisition = opennms.Requisition("test")
-    testrequisition.add_node(testnode)
-    print(testrequisition.get_xml_string())
+    # get config and JobUtilty
+    appconfig = config.AppConfig("../etc/appconfig.conf")
+    jobutil = executor.JobUtility(appconfig)
+
+    # get job
+    job = jobutil.create_job("default")
+    job.execute()
 
 
 if __name__ == "__main__":

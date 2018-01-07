@@ -86,6 +86,10 @@ class Requisition(object):
             raise Exception("not a Node object")
         self.__nodes[node.get_foreign_id()] = node
 
+    def add_nodelist(self, nodelist):
+        for node in nodelist:
+            self.add_node(node)
+
     def get_xml_string(self):
         # requisition object
         attributes = {}
@@ -102,15 +106,18 @@ class Requisition(object):
 
 class Target(object):
 
-    def __init__(self, name, rest_url, rest_user, rest_password):
+    def __init__(self, name, rest_url, rest_user, rest_password, requisition_name):
         self.__name = name
         self.__rest_url = rest_url
         self.__rest_user = rest_user
         self.__rest_password = rest_password
+        self.__requisition_name = requisition_name
 
-    def export_requisition(self, requisition):
-        if not isinstance(requisition, Requisition):
-            raise Exception("not a Requisition object")
+    def create_requisition(self, nodelist):
+        # create requisition
+        requisition = Requisition(self.__requisition_name)
+        requisition.add_nodelist(nodelist)
 
+        # print
         print(requisition.get_xml_string())
 
