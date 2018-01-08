@@ -1,3 +1,4 @@
+import requests
 import xml.etree.ElementTree as ET
 
 class Node(object):
@@ -50,6 +51,12 @@ class Node(object):
             attributes["location"] = self.__location
         node = ET.Element("node", attributes)
 
+        # interfaces
+        for interface in self.__interfaces:
+            attributes = {}
+            attributes["ip-addr"] = interface
+            ET.SubElement(node, "interface", attributes)
+
         # categories
         for category in self.__categories:
             attributes = {}
@@ -94,7 +101,7 @@ class Requisition(object):
         # requisition object
         attributes = {}
         attributes["foreign-source"] = self.__name
-        requisition = ET.Element("requisition", attributes)
+        requisition = ET.Element("model-import", attributes)
 
         # add nodes
         for foreign_id in self.__nodes:
@@ -121,3 +128,24 @@ class Target(object):
         # print
         print(requisition.get_xml_string())
 
+        # export requisition
+        xmldata = requisition.get_xml_string()
+        url = self.__rest_url + "/requisitions"
+        request_header = {
+            "Content-Type": "application/xml"
+        }
+        try:
+            response = requests.post(url, data=xmldata, headers=request_header, auth=(self.__rest_user, self.__rest_password))
+            if response.status_code > 202:
+                raise Exception("Error connecting to OpenNMS. HTTP/" + str(response.status_code))
+        except:
+            raise 
+
+        # synchronize
+        url = self.__rest_url + "/requisitions/" + self.__requisition_name + "/import"
+        try:
+            response = requests.put(url, data="", auth=(self.__rest_user, self.__rest_password))
+            if response.status_code > 202:
+                raise Exception("Error connecting to OpenNMS. HTTP/" + str(response.status_code))
+        except:
+            raise 
