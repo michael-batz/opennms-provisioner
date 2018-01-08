@@ -11,3 +11,6 @@ __pycache__/
 
 # directory for virtualenv
 env/
+
+# logs directory
+logs/

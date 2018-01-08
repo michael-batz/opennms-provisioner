@@ -16,6 +16,9 @@ class AppConfig(object):
     def get_value(self, section, key, default):
         return self.__config.get(section, key, fallback=default)
 
+    def get_value_boolean(self, section, key, default):
+        return self.__config.getboolean(section, key, fallback=default)
+
     def get_section(self, section):
         output = {}
         for option in self.__config[section]:

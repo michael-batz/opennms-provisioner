@@ -9,16 +9,26 @@ This is the main module of opennms-provisioner
 """
 import argparse
 import os
+import sys
+import logging
+import logging.config
 import config
 import executor
 
 def main():
     """main function"""
 
-    # get config and JobUtilty
+    # get basedir
     basedir = os.path.dirname(__file__)
+
+    # get config and JobUtilty
     appconfig = config.AppConfig(basedir + "/../etc/appconfig.conf")
     jobutil = executor.JobUtility(appconfig)
+
+    # get logging
+    logging.basedir = basedir + "/../logs"
+    logging.config.fileConfig(basedir + "/../etc/logging.conf")
+    logger = logging.getLogger("app")
 
     # parse arguments
     parser =  argparse.ArgumentParser(description="Helper for OpenNMS Provisioning")
@@ -26,8 +36,15 @@ def main():
     args = parser.parse_args()
 
     # get job
-    job = jobutil.create_job(args.jobname)
-    job.execute()
+    try:
+        job = jobutil.create_job(args.jobname)
+        job.execute()
+    except executor.ConfigException as e:
+        logger.error("Configuration Error: %s", e)
+        sys.exit(-1)
+    except executor.TargetException as e:
+        logger.error("Target Error: %s", e)
+        sys.exit(-1)
 
 
 if __name__ == "__main__":

@@ -120,32 +120,38 @@ class Target(object):
         self.__rest_password = rest_password
         self.__requisition_name = requisition_name
 
-    def create_requisition(self, nodelist):
+    def create_requisition(self, nodelist, simulation):
         # create requisition
         requisition = Requisition(self.__requisition_name)
         requisition.add_nodelist(nodelist)
 
         # print
-        print(requisition.get_xml_string())
+        if simulation:
+            print(requisition.get_xml_string())
+        else:
+            # export requisition
+            xmldata = requisition.get_xml_string()
+            url = self.__rest_url + "/requisitions"
+            request_header = {
+                "Content-Type": "application/xml"
+            }
+            try:
+                response = requests.post(url, data=xmldata, headers=request_header, auth=(self.__rest_user, self.__rest_password))
+                if response.status_code > 202:
+                    raise ConnectionException("Error sending data to OpenNMS REST API /requisitions. HTTP/%s".format(response.status_code,))
+            except:
+                raise ConnectionException("Error connecting to OpenNMS REST API")
 
-        # export requisition
-        xmldata = requisition.get_xml_string()
-        url = self.__rest_url + "/requisitions"
-        request_header = {
-            "Content-Type": "application/xml"
-        }
-        try:
-            response = requests.post(url, data=xmldata, headers=request_header, auth=(self.__rest_user, self.__rest_password))
-            if response.status_code > 202:
-                raise Exception("Error connecting to OpenNMS. HTTP/" + str(response.status_code))
-        except:
-            raise 
+            # synchronize
+            url = self.__rest_url + "/requisitions/" + self.__requisition_name + "/import"
+            try:
+                response = requests.put(url, data="", auth=(self.__rest_user, self.__rest_password))
+                if response.status_code > 202:
+                    raise Exception("Error sending data to OpenNMS REST API /requisitions/<req>/import. HTTP/%s".format(response.status_code,))
+            except:
+                raise ConnectionException("Error connecting to OpenNMS REST API")
 
-        # synchronize
-        url = self.__rest_url + "/requisitions/" + self.__requisition_name + "/import"
-        try:
-            response = requests.put(url, data="", auth=(self.__rest_user, self.__rest_password))
-            if response.status_code > 202:
-                raise Exception("Error connecting to OpenNMS. HTTP/" + str(response.status_code))
-        except:
-            raise 
+
+class ConnectionException(Exception):
+    def __init__(self, *args, **kwargs):
+        Exception.__init__(self, *args, **kwargs)

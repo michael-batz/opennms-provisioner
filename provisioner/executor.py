@@ -17,9 +17,14 @@ class JobUtility(object):
 
     def create_job(self, name):
         # get job details from config
+        if name not in self.get_job_names():
+            raise ConfigException("Job {} does not exist in configuration".format(name,))
         job_name = "job_" + name
+        job_simulate = self.__config.get_value_boolean(job_name, "simulate_only", False)
         target_name = "target_" + self.__config.get_value(job_name, "target", None)
         source_name = "source_" + self.__config.get_value(job_name, "source", None)
+        if (target_name is None) or (source_name is None):
+            raise ConfigException("target and source for job %s is not defined".format(job_name,))
 
         # get target from config
         target_url = self.__config.get_value(target_name, "rest_url", "http://localhost:8980/opennms/rest")
@@ -34,14 +39,15 @@ class JobUtility(object):
         sourceobj = eval("source." + source_class + "(source_name, source_parameters)")
 
         # create job
-        job = Job(job_name, sourceobj, targetobj)
+        job = Job(job_name, job_simulate, sourceobj, targetobj)
         return job
 
 
 class Job(object):
 
-    def __init__(self, name, sourceobj, targetobj):
+    def __init__(self, name, simulate, sourceobj, targetobj):
         self.__name = name
+        self.__simulate = simulate
         self.__sourceobj = sourceobj
         self.__targetobj = targetobj
 
@@ -50,5 +56,16 @@ class Job(object):
         nodelist = self.__sourceobj.get_nodes()
 
         # create requisition
-        self.__targetobj.create_requisition(nodelist)
+        try:
+            self.__targetobj.create_requisition(nodelist, self.__simulate)
+        except opennms.ConnectionException as e:
+            raise TargetException(str(e))
 
+
+class ConfigException(Exception):
+    def __init__(self, *args, **kwargs):
+        Exception.__init__(self, *args, **kwargs)
+
+class TargetException(Exception):
+    def __init__(self, *args, **kwargs):
+        Exception.__init__(self, *args, **kwargs)
