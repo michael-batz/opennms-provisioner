@@ -29,9 +29,9 @@ class JobUtility(object):
         targetobj = opennms.Target(target_name, target_url, target_user, target_pw, target_requisition)
 
         # get source from config
-        source_type = self.__config.get_value(source_name, "type", "Source")
+        source_class = self.__config.get_value(source_name, "class", "Source")
         source_parameters = self.__config.get_section(source_name)
-        sourceobj = source.DummySource(source_name, source_parameters)
+        sourceobj = eval("source." + source_class + "(source_name, source_parameters)")
 
         # create job
         job = Job(job_name, sourceobj, targetobj)
