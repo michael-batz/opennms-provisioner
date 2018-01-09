@@ -136,19 +136,19 @@ class Target(object):
                 "Content-Type": "application/xml"
             }
             try:
-                response = requests.post(url, data=xmldata, headers=request_header, auth=(self.__rest_user, self.__rest_password))
+                response = requests.post(url, data=xmldata, headers=request_header, auth=(self.__rest_user, self.__rest_password), verify=False)
                 if response.status_code > 202:
-                    raise ConnectionException("Error sending data to OpenNMS REST API /requisitions. HTTP/%s".format(response.status_code,))
-            except:
+                    raise ConnectionException("Error sending data to OpenNMS REST API /requisitions. HTTP/{}".format(response.status_code,))
+            except requests.exceptions.ConnectionError:
                 raise ConnectionException("Error connecting to OpenNMS REST API")
 
             # synchronize
             url = self.__rest_url + "/requisitions/" + self.__requisition_name + "/import"
             try:
-                response = requests.put(url, data="", auth=(self.__rest_user, self.__rest_password))
+                response = requests.put(url, data="", auth=(self.__rest_user, self.__rest_password), verify=False)
                 if response.status_code > 202:
-                    raise Exception("Error sending data to OpenNMS REST API /requisitions/<req>/import. HTTP/%s".format(response.status_code,))
-            except:
+                    raise Exception("Error sending data to OpenNMS REST API /requisitions/<req>/import. HTTP/{}".format(response.status_code,))
+            except requests.exceptions.ConnectionError:
                 raise ConnectionException("Error connecting to OpenNMS REST API")
 
 
