@@ -53,7 +53,10 @@ class Job(object):
 
     def execute(self):
         # get nodelist from source
-        nodelist = self.__sourceobj.get_nodes()
+        try:
+            nodelist = self.__sourceobj.get_nodes()
+        except source.SourceException as e:
+            raise SourceException(str(e))
 
         # create requisition
         try:
@@ -67,5 +70,9 @@ class ConfigException(Exception):
         Exception.__init__(self, *args, **kwargs)
 
 class TargetException(Exception):
+    def __init__(self, *args, **kwargs):
+        Exception.__init__(self, *args, **kwargs)
+
+class SourceException(Exception):
     def __init__(self, *args, **kwargs):
         Exception.__init__(self, *args, **kwargs)

@@ -11,6 +11,11 @@ class Source(object):
         pass
 
 
+class SourceException(Exception):
+    def __init__(self, *args, **kwargs):
+        Exception.__init__(self, *args, **kwargs)
+
+
 class DummySource(Source):
 
     def __init__(self, name, parameters):

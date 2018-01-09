@@ -42,6 +42,9 @@ def main():
     except executor.ConfigException as e:
         logger.error("Configuration Error: %s", e)
         sys.exit(-1)
+    except executor.SourceException as e:
+        logger.error("Source Error: %s", e)
+        sys.exit(-1)
     except executor.TargetException as e:
         logger.error("Target Error: %s", e)
         sys.exit(-1)
