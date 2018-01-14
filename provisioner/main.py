@@ -31,7 +31,7 @@ def main():
     logger = logging.getLogger("app")
 
     # parse arguments
-    parser =  argparse.ArgumentParser(description="Helper for OpenNMS Provisioning")
+    parser = argparse.ArgumentParser(description="Helper for OpenNMS Provisioning")
     parser.add_argument("jobname", help="name of the provisioning job")
     args = parser.parse_args()
 

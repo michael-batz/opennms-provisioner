@@ -1,6 +1,15 @@
-import requests
+"""
+opennms-provisioner opennms module
+
+This module defines OpenNMS nodes, requisitions and targets and
+is responsible for communicating with OpenNMS.
+
+:license: MIT, see LICENSE for more details
+:copyright: (c) 2018 by Michael Batz, see AUTHORS for more details
+"""
 import xml.etree.ElementTree as ET
 import xml.dom.minidom
+import requests
 
 class Node(object):
     """ An OpenNMS node object.
@@ -11,7 +20,7 @@ class Node(object):
     Attributes:
         label: label of the node
         foreign_id: foreign ID of the node
-        location: (minion) location of the node
+        location: (minion) location of the node or None
     """
 
     def __init__(self, label, foreign_id, location=None):
@@ -44,9 +53,11 @@ class Node(object):
         self.__categories.add(category)
 
     def add_asset(self, key, value):
+        """ adds an asset record """
         self.__assets[key] = value
 
     def get_xml_element(self):
+        """ returns the OpenNMS node as XML element """
         # node element
         attributes = {}
         attributes["foreign-id"] = self.__foreign_id
@@ -74,7 +85,7 @@ class Node(object):
         # assets
         for asset in self.__assets:
             attributes = {}
-            attributes["name"]= asset
+            attributes["name"] = asset
             attributes["value"] = self.__assets[asset]
             ET.SubElement(node, "asset", attributes)
 
@@ -82,6 +93,7 @@ class Node(object):
         return node
 
     def get_xml_string(self):
+        """ returns the OpenNMS node as XML string """
         element = self.get_xml_element()
         return ET.tostring(element, encoding="unicode", method="xml")
 
@@ -91,21 +103,30 @@ class Node(object):
 
 
 class Requisition(object):
+    """ An OpenNMS requisition object.
 
+    This class represents an OpenNMS requisition.
+
+    Attributes:
+        name: name of the requisition
+    """
     def __init__(self, name):
         self.__name = name
         self.__nodes = {}
 
     def add_node(self, node):
+        """ Add an OpenNMS node to the requisition """
         if not isinstance(node, Node):
             raise Exception("not a Node object")
         self.__nodes[node.get_foreign_id()] = node
 
     def add_nodelist(self, nodelist):
+        """ Add a list of OpenNMS nodes to the requisition """
         for node in nodelist:
             self.add_node(node)
 
     def get_xml_string(self):
+        """ return the requisition as XML string """
         # requisition object
         attributes = {}
         attributes["foreign-source"] = self.__name
@@ -120,8 +141,19 @@ class Requisition(object):
 
 
 class Target(object):
+    """ An OpenNMS target object.
 
+    This class represents an OpenNMS target.
+
+    Attributes:
+        name: name of the target
+        rest_url: URL of the OpenNMS REST API
+        rest_user: username for the OpenNMS REST API
+        rest_password: password for the OpenNMS REST API
+        requisition_name: name of the requisition to export nodes
+    """
     def __init__(self, name, rest_url, rest_user, rest_password, requisition_name):
+        """ create a new OpenNMS target """
         self.__name = name
         self.__rest_url = rest_url
         self.__rest_user = rest_user
@@ -129,6 +161,12 @@ class Target(object):
         self.__requisition_name = requisition_name
 
     def create_requisition(self, nodelist, simulation):
+        """ create and export the requisition
+
+        Parameters:
+            nodelist: list with OpenNMS node objects to export
+            simulation: only print the requisition as XML, do not export them to OpenNMS
+        """
         # create requisition
         requisition = Requisition(self.__requisition_name)
         requisition.add_nodelist(nodelist)
@@ -146,9 +184,12 @@ class Target(object):
                 "Content-Type": "application/xml"
             }
             try:
-                response = requests.post(url, data=xmldata, headers=request_header, auth=(self.__rest_user, self.__rest_password), verify=False)
+                response = requests.post(url, data=xmldata, headers=request_header,
+                                         auth=(self.__rest_user, self.__rest_password), verify=False)
                 if response.status_code > 202:
-                    raise ConnectionException("Error sending data to OpenNMS REST API /requisitions. HTTP/{}".format(response.status_code,))
+                    error_message = "Error sending data to OpenNMS REST API /requisitions. HTTP/{}"
+                    error_message.format(response.status_code,)
+                    raise ConnectionException(error_message)
             except requests.exceptions.ConnectionError:
                 raise ConnectionException("Error connecting to OpenNMS REST API")
 
@@ -157,11 +198,18 @@ class Target(object):
             try:
                 response = requests.put(url, data="", auth=(self.__rest_user, self.__rest_password), verify=False)
                 if response.status_code > 202:
-                    raise Exception("Error sending data to OpenNMS REST API /requisitions/<req>/import. HTTP/{}".format(response.status_code,))
+                    error_message = "Error sending data to OpenNMS REST API /requisitions/<req>/import. HTTP/{}"
+                    error_message.format(response.status_code,)
+                    raise Exception(error_message)
             except requests.exceptions.ConnectionError:
                 raise ConnectionException("Error connecting to OpenNMS REST API")
 
 
 class ConnectionException(Exception):
+    """ ConnectionException.
+
+    Exception to be raised, if there are problems communicating
+    to the OpenNMS REST API.
+    """
     def __init__(self, *args, **kwargs):
         Exception.__init__(self, *args, **kwargs)
