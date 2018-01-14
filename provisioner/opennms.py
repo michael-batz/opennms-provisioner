@@ -19,8 +19,7 @@ class Node(object):
         self.__label = label
         self.__foreign_id = foreign_id
         self.__location = location
-        self.__interfaces = set()
-        self.__services = {}
+        self.__iface_service_map = {}
         self.__categories = set()
         self.__assets = {}
 
@@ -30,11 +29,15 @@ class Node(object):
 
     def add_interface(self, ip):
         """ adds a new IP interface """
-        self.__interfaces.add(ip)
+        if ip not in self.__iface_service_map:
+            self.__iface_service_map[ip] = set()
 
     def add_service(self, ip, service):
         """ adds a new service to the node """
-        pass
+        # add interface
+        self.add_interface(ip)
+        # add service
+        self.__iface_service_map[ip].add(service)
 
     def add_category(self, category):
         """ adds a new category """
@@ -53,10 +56,14 @@ class Node(object):
         node = ET.Element("node", attributes)
 
         # interfaces
-        for interface in self.__interfaces:
+        for interface in self.__iface_service_map:
             attributes = {}
             attributes["ip-addr"] = interface
-            ET.SubElement(node, "interface", attributes)
+            iface = ET.SubElement(node, "interface", attributes)
+            for service in self.__iface_service_map[interface]:
+                subattributes = {}
+                subattributes["service-name"] = service
+                ET.SubElement(iface, "monitored-service", subattributes)
 
         # categories
         for category in self.__categories:

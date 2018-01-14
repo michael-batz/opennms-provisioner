@@ -41,6 +41,8 @@ class DummySource(Source):
         # create testnode 1
         node_1 = opennms.Node("testnode1", "1")
         node_1.add_interface("127.0.0.1")
+        node_1.add_service("127.0.0.1", "ICMP")
+        node_1.add_service("127.0.0.1", "SNMP")
         node_1.add_asset("city", "Fulda")
         node_1.add_asset("zip", "36041")
         node_1.add_category("Test")
