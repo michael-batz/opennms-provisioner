@@ -11,6 +11,12 @@ class Source(object):
         self._parameters = parameters
         self._logger = logging.getLogger("app")
 
+    def get_parameter(self, name, default=None):
+        output = default
+        if name in self._parameters:
+            output = self._parameters[name]
+        return output
+
     def get_nodes(self):
         raise Exception("not implemented")
         pass
@@ -31,12 +37,8 @@ class DummySource(Source):
         nodelist = []
 
         # get parameters from config
-        cat1 = None
-        cat2 = None
-        if "cat1" in self._parameters:
-            cat1 = self._parameters["cat1"]
-        if "cat2" in self._parameters:
-            cat2 = self._parameters["cat2"]
+        cat1 = self.get_parameter("cat1", None)
+        cat2 = self.get_parameter("cat2", None)
 
         # create testnode 1
         node_1 = opennms.Node("testnode1", "1")
@@ -78,18 +80,10 @@ class VmwareSource(Source):
         nodelist = []
 
         # get parameters from config
-        vmware_host = "localhost"
-        vmware_port = "443"
-        vmware_user = "admin"
-        vmware_password = "admin"
-        if "vmware_host" in self._parameters:
-            vmware_host = self._parameters["vmware_host"]
-        if "vmware_port" in self._parameters:
-            vmware_port = self._parameters["vmware_port"]
-        if "vmware_user" in self._parameters:
-            vmware_user = self._parameters["vmware_user"]
-        if "vmware_password" in self._parameters:
-            vmware_password = self._parameters["vmware_password"]
+        vmware_host = self.get_parameter("vmware_host", "localhost")
+        vmware_port = self.get_parameter("vmware_port", "443")
+        vmware_user = self.get_parameter("vmware_user", "admin")
+        vmware_password = self.get_parameter("vmware_password", "admin")
 
         # connect to Vmware server
         try:
