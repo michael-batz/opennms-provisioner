@@ -1,5 +1,6 @@
 import requests
 import xml.etree.ElementTree as ET
+import xml.dom.minidom
 
 class Node(object):
     """ An OpenNMS node object.
@@ -125,9 +126,11 @@ class Target(object):
         requisition = Requisition(self.__requisition_name)
         requisition.add_nodelist(nodelist)
 
-        # print
         if simulation:
-            print(requisition.get_xml_string())
+            # pretty print
+            requisition_dom = xml.dom.minidom.parseString(requisition.get_xml_string())
+            print(requisition_dom.toprettyxml())
+
         else:
             # export requisition
             xmldata = requisition.get_xml_string()
