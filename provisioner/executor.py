@@ -9,6 +9,8 @@ create jobs from configuration and executes them.
 """
 import opennms
 import source
+import sources.custom
+import sources.default
 
 class JobUtility(object):
     """ Utility class for handling jobs.
@@ -59,7 +61,7 @@ class JobUtility(object):
         # get source from config
         source_class = self.__config.get_value(source_name, "class", "Source")
         source_parameters = self.__config.get_section(source_name)
-        sourceobj = eval("source." + source_class + "(source_name, source_parameters)")
+        sourceobj = eval(source_class + "(source_name, source_parameters)")
 
         # create job
         job = Job(job_name, job_simulate, sourceobj, targetobj)
