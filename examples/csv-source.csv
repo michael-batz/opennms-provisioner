@@ -1,0 +1,4 @@
+nodelabel;interfaces;services;category_location;category_devicetype;asset_city;
+test1.example.com;10.3.65.1,10.4.65.1;ICMP,SNMP;FRA1;router;Frankfurt;
+test2.example.com;10.2.2.1;ICMP,SNMP;NYC1;router;New York;
+test3.example.com;10.8.1.1;;NYC1;router;San Francisco;
