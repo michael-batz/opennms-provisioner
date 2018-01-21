@@ -7,6 +7,7 @@ is responsible for communicating with OpenNMS.
 :license: MIT, see LICENSE for more details
 :copyright: (c) 2018 by Michael Batz, see AUTHORS for more details
 """
+import logging
 import xml.etree.ElementTree as ET
 import xml.dom.minidom
 import requests
@@ -113,11 +114,18 @@ class Requisition(object):
     def __init__(self, name):
         self.__name = name
         self.__nodes = {}
+        self.__logger = logging.getLogger("app")
 
     def add_node(self, node):
         """ Add an OpenNMS node to the requisition """
         if not isinstance(node, Node):
             raise Exception("not a Node object")
+        # check, if node with foreign_id already exist
+        if node.get_foreign_id() in self.__nodes:
+            message = "OpenNMS requisition: Node with foreign ID %s already exist in requisition - ignoring"
+            self.__logger.warning(message, node.get_foreign_id())
+            return
+        # add node to dict
         self.__nodes[node.get_foreign_id()] = node
 
     def add_nodelist(self, nodelist):
@@ -159,6 +167,7 @@ class Target(object):
         self.__rest_user = rest_user
         self.__rest_password = rest_password
         self.__requisition_name = requisition_name
+        self.__logger = logging.getLogger("app")
 
     def create_requisition(self, nodelist, simulation):
         """ create and export the requisition
@@ -203,6 +212,8 @@ class Target(object):
                     raise Exception(error_message)
             except requests.exceptions.ConnectionError:
                 raise ConnectionException("Error connecting to OpenNMS REST API")
+            self.__logger.info("OpenNMS target: requisition %s was exported successfully to target %s",
+                               self.__requisition_name, self.__name)
 
 
 class ConnectionException(Exception):
