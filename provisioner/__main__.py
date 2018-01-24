@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 opennms-provisioner main module
 
@@ -12,8 +11,8 @@ import os
 import sys
 import logging
 import logging.config
-import config
-import executor
+import provisioner.config
+import provisioner.executor
 
 def main():
     """main function"""
@@ -22,8 +21,8 @@ def main():
     basedir = os.path.dirname(__file__)
 
     # get config and JobUtilty
-    appconfig = config.AppConfig(basedir + "/../etc/appconfig.conf")
-    jobutil = executor.JobUtility(appconfig)
+    appconfig = provisioner.config.AppConfig(basedir + "/../etc/appconfig.conf")
+    jobutil = provisioner.executor.JobUtility(appconfig)
 
     # get logging
     logging.basedir = basedir + "/../logs"
@@ -39,13 +38,13 @@ def main():
     try:
         job = jobutil.create_job(args.jobname)
         job.execute()
-    except executor.ConfigException as e:
+    except provisioner.executor.ConfigException as e:
         logger.error("Configuration Error: %s", e)
         sys.exit(-1)
-    except executor.SourceException as e:
+    except provisioner.executor.SourceException as e:
         logger.error("Source Error: %s", e)
         sys.exit(-1)
-    except executor.TargetException as e:
+    except provisioner.executor.TargetException as e:
         logger.error("Target Error: %s", e)
         sys.exit(-1)
 

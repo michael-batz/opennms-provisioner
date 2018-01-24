@@ -11,10 +11,10 @@ import csv
 import pyVim
 import pyVim.connect
 import pyVmomi
-import source
-import opennms
+import provisioner.source
+import provisioner.opennms
 
-class CsvSource(source.Source):
+class CsvSource(provisioner.source.Source):
     """ Source for getting VMs from a CSV file.
 
     This source creates OpenNMS nodes from a CSV file.
@@ -25,7 +25,7 @@ class CsvSource(source.Source):
     """
 
     def __init__(self, name, parameters):
-        source.Source.__init__(self, name, parameters)
+        provisioner.source.Source.__init__(self, name, parameters)
 
     def get_nodes(self):
         #create nodelist
@@ -36,7 +36,8 @@ class CsvSource(source.Source):
         csv_delimiter = self.get_parameter("csv_delimiter", ";")
         csv_quotechar = self.get_parameter("csv_qoutechar", "\"")
         if not csv_filename:
-            raise source.SourceException("CsvSource: csv filename not configured. Please check your configuration")
+            message = "CsvSource: csv filename not configured. Please check your configuration"
+            raise provisioner.source.SourceException(message)
 
         # load csv with DictReader
         with open(csv_filename) as csv_file:
@@ -54,7 +55,7 @@ class CsvSource(source.Source):
                 node_label = csv_row["nodelabel"]
                 node_location = csv_row.get("location", None)
                 node_foreignid = csv_row.get("foreign_id", node_label)
-                node = opennms.Node(node_label, node_foreignid, node_location)
+                node = provisioner.opennms.Node(node_label, node_foreignid, node_location)
 
                 # add interfaces and services
                 node_interfaces = csv_row.get("interfaces", None)
@@ -84,7 +85,7 @@ class CsvSource(source.Source):
         return nodelist
 
 
-class VmwareSource(source.Source):
+class VmwareSource(provisioner.source.Source):
     """ Source for getting VMs from a VmWare ESX host.
 
     This source creates OpenNMS nodes from a VmWare ESX host.
@@ -133,7 +134,7 @@ class VmwareSource(source.Source):
             vm_hostname = vm.summary.config.name
             vm_ip = vm.summary.guest.ipAddress
             if vm_ip is not None:
-                node = opennms.Node(vm_hostname, vm_hostname)
+                node = provisioner.opennms.Node(vm_hostname, vm_hostname)
                 node.add_interface(vm_ip)
                 nodelist.append(node)
             else:

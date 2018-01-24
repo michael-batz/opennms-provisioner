@@ -8,10 +8,10 @@ class source.Source. Please see DummySource for an example
 :license: MIT, see LICENSE for more details
 :copyright: (c) 2018 by Michael Batz, see AUTHORS for more details
 """
-import source
-import opennms
+import provisioner.source
+import provisioner.opennms
 
-class DummySource(source.Source):
+class DummySource(provisioner.source.Source):
     """ Dummy source.
 
     This is source is a test and demonstrates the implementation
@@ -23,7 +23,7 @@ class DummySource(source.Source):
     """
 
     def __init__(self, name, parameters):
-        source.Source.__init__(self, name, parameters)
+        provisioner.source.Source.__init__(self, name, parameters)
 
     def get_nodes(self):
         # create nodelist
@@ -34,7 +34,7 @@ class DummySource(source.Source):
         cat2 = self.get_parameter("cat2", None)
 
         # create testnode 1
-        node_1 = opennms.Node("testnode1", "1")
+        node_1 = provisioner.opennms.Node("testnode1", "1")
         node_1.add_interface("127.0.0.1")
         node_1.add_service("127.0.0.1", "ICMP")
         node_1.add_service("127.0.0.1", "SNMP")
@@ -47,7 +47,7 @@ class DummySource(source.Source):
             node_1.add_category(cat2)
 
         # create testnode2
-        node_2 = opennms.Node("testnode2", "2")
+        node_2 = provisioner.opennms.Node("testnode2", "2")
         node_2.add_interface("127.0.0.1")
         node_2.add_asset("city", "Fulda")
         node_2.add_asset("zip", "36041")

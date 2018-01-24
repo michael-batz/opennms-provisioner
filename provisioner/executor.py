@@ -7,10 +7,10 @@ create jobs from configuration and executes them.
 :license: MIT, see LICENSE for more details
 :copyright: (c) 2018 by Michael Batz, see AUTHORS for more details
 """
-import opennms
-import source
-import sources.custom
-import sources.default
+import provisioner.opennms
+import provisioner.source
+import provisioner.sources.custom
+import provisioner.sources.default
 
 class JobUtility(object):
     """ Utility class for handling jobs.
@@ -56,7 +56,7 @@ class JobUtility(object):
         target_user = self.__config.get_value(target_name, "rest_user", "admin")
         target_pw = self.__config.get_value(target_name, "rest_password", "admin")
         target_requisition = self.__config.get_value(target_name, "requisition", "provisioner")
-        targetobj = opennms.Target(target_name, target_url, target_user, target_pw, target_requisition)
+        targetobj = provisioner.opennms.Target(target_name, target_url, target_user, target_pw, target_requisition)
 
         # get source from config
         source_class = self.__config.get_value(source_name, "class", "Source")
@@ -92,13 +92,13 @@ class Job(object):
         # get nodelist from source
         try:
             nodelist = self.__sourceobj.get_nodes()
-        except source.SourceException as e:
+        except provisioner.source.SourceException as e:
             raise SourceException(str(e))
 
         # create requisition
         try:
             self.__targetobj.create_requisition(nodelist, self.__simulate)
-        except opennms.ConnectionException as e:
+        except provisioner.opennms.ConnectionException as e:
             raise TargetException(str(e))
 
 
