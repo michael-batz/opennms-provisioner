@@ -1,0 +1,18 @@
+2018-01-14 12:19:53,495 - app - ERROR - Configuration Error: Job dd does not exist in configuration
+2018-01-14 13:33:35,490 - app - ERROR - Configuration Error: Job def does not exist in configuration
+2018-01-20 12:28:57,863 - app - ERROR - Configuration Error: Job v does not exist in configuration
+2018-01-20 12:52:38,802 - app - ERROR - Configuration Error: Job vm does not exist in configuration
+2018-01-21 11:07:21,534 - app - WARNING - CsvSource: Could not import row, because no nodelabel is set
+2018-01-21 11:07:21,537 - app - WARNING - CsvSource: Could not import row, because no nodelabel is set
+2018-01-21 11:07:21,537 - app - WARNING - CsvSource: Could not import row, because no nodelabel is set
+2018-01-21 11:12:31,581 - app - WARNING - CsvSource: Could not import row, because no nodelabel is set
+2018-01-21 11:12:31,581 - app - WARNING - CsvSource: Could not import row, because no nodelabel is set
+2018-01-21 11:12:31,581 - app - WARNING - CsvSource: Could not import row, because no nodelabel is set
+2018-01-21 11:15:11,040 - app - WARNING - CsvSource: Could not import row, because no nodelabel is set. row: OrderedDict([('inodelabel', 'test1.example.com'), ('interfaces', '10.3.65.1,10.4.65.1'), ('services', 'ICMP,SNMP'), ('category_location', 'FRA1'), ('category_devicetype', 'router'), ('asset_city', 'Frankfurt'), ('', '')])
+2018-01-21 11:15:11,041 - app - WARNING - CsvSource: Could not import row, because no nodelabel is set. row: OrderedDict([('inodelabel', 'test2.example.com'), ('interfaces', '10.2.2.1'), ('services', 'ICMP,SNMP'), ('category_location', 'NYC1'), ('category_devicetype', 'router'), ('asset_city', 'New York'), ('', '')])
+2018-01-21 11:15:11,041 - app - WARNING - CsvSource: Could not import row, because no nodelabel is set. row: OrderedDict([('inodelabel', 'test3.example.com'), ('interfaces', '10.8.1.1'), ('services', ''), ('category_location', 'NYC1'), ('category_devicetype', 'router'), ('asset_city', 'San Francisco'), ('', '')])
+2018-01-21 11:16:07,028 - app - WARNING - CsvSource: Could not import row, because no nodelabel is set. row: OrderedDict([('inodelabel', 'test1.example.com'), ('interfaces', '10.3.65.1,10.4.65.1'), ('services', 'ICMP,SNMP'), ('category_location', 'FRA1'), ('category_devicetype', 'router'), ('asset_city', 'Frankfurt'), ('', '')])
+2018-01-21 11:16:07,028 - app - WARNING - CsvSource: Could not import row, because no nodelabel is set. row: OrderedDict([('inodelabel', 'test2.example.com'), ('interfaces', '10.2.2.1'), ('services', 'ICMP,SNMP'), ('category_location', 'NYC1'), ('category_devicetype', 'router'), ('asset_city', 'New York'), ('', '')])
+2018-01-21 11:16:07,029 - app - WARNING - CsvSource: Could not import row, because no nodelabel is set. row: OrderedDict([('inodelabel', 'test3.example.com'), ('interfaces', '10.8.1.1'), ('services', ''), ('category_location', 'NYC1'), ('category_devicetype', 'router'), ('asset_city', 'San Francisco'), ('', '')])
+2018-01-21 11:37:06,790 - app - WARNING - OpenNMS requisition: Node with foreign ID test2.example.com already exist in requisition - ignoring
+2018-01-28 13:42:09,686 - app - ERROR - Configuration Error: Job defaul does not exist in configuration

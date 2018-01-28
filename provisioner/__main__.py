@@ -11,22 +11,21 @@ import os
 import sys
 import logging
 import logging.config
+import pkg_resources
 import provisioner.config
 import provisioner.executor
 
 def main():
     """main function"""
 
-    # get basedir
-    basedir = os.path.dirname(__file__)
-
     # get config and JobUtilty
-    appconfig = provisioner.config.AppConfig(basedir + "/../etc/appconfig.conf")
+    appconfig = provisioner.config.AppConfig(pkg_resources.resource_filename(__name__, "data/etc/appconfig.conf"))
     jobutil = provisioner.executor.JobUtility(appconfig)
 
     # get logging
-    logging.basedir = basedir + "/../logs"
-    logging.config.fileConfig(basedir + "/../etc/logging.conf")
+    logging.basedir = pkg_resources.resource_filename(__name__, "data/logs")
+    logconfig = pkg_resources.resource_filename(__name__, "data/etc/logging.conf")
+    logging.config.fileConfig(logconfig)
     logger = logging.getLogger("app")
 
     # parse arguments
