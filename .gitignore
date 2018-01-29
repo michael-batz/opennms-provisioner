@@ -13,4 +13,4 @@ __pycache__/
 env/
 
 # logs
-logs/app.log
+provisioner/data/logs/app.log
