@@ -7,10 +7,10 @@ create jobs from configuration and executes them.
 :license: MIT, see LICENSE for more details
 :copyright: (c) 2018 by Michael Batz, see AUTHORS for more details
 """
+import importlib
+import re
 import provisioner.opennms
 import provisioner.source
-import provisioner.sources.custom
-import provisioner.sources.default
 
 class JobUtility(object):
     """ Utility class for handling jobs.
@@ -28,15 +28,15 @@ class JobUtility(object):
         self.__config = config
 
     def get_job_names(self):
-        """ return a list with all job names defined in configurarion """
+        """ return a list with all job names defined in configuration """
         return self.__config.get_sections("job_")
 
     def get_source_names(self):
-        """ return a list with all source names defined in configurarion """
+        """ return a list with all source names defined in configuration """
         return self.__config.get_sections("source_")
 
     def get_target_names(self):
-        """ return a list with all target names defined in configurarion """
+        """ return a list with all target names defined in configuration """
         return self.__config.get_sections("target_")
 
     def create_job(self, name):
@@ -58,14 +58,28 @@ class JobUtility(object):
         target_requisition = self.__config.get_value(target_name, "requisition", "provisioner")
         targetobj = provisioner.opennms.Target(target_name, target_url, target_user, target_pw, target_requisition)
 
-        # get source from config
-        source_class = self.__config.get_value(source_name, "class", "Source")
+        # load source class from config
+        source_classname = self.__config.get_value(source_name, "class", "Source")
         source_parameters = self.__config.get_section(source_name)
-        sourceobj = eval(source_class + "(source_name, source_parameters)")
+        source_class = self.__load_class(source_classname)
+        sourceobj = source_class(source_name, source_parameters)
 
         # create job
         job = Job(job_name, job_simulate, sourceobj, targetobj)
         return job
+
+    def __load_class(self, classname):
+        """ load and return the class with the given classname """
+        # extract class from module
+        pattern = re.compile("(.*)\.(.*)")
+        match = pattern.fullmatch(classname)
+        if match is None:
+            raise SourceException("Could not load source {}".format(classname,))
+        module_name = match.group(1)
+        class_name = match.group(2)
+        loaded_module = importlib.import_module(module_name)
+        loaded_class = getattr(loaded_module, class_name)
+        return loaded_class
 
 
 class Job(object):
