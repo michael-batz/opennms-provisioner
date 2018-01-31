@@ -12,5 +12,10 @@ __pycache__/
 # directory for virtualenv
 env/
 
+# packaging
+build/
+dist/
+*.egg-info/
+
 # logs
 provisioner/data/logs/app.log

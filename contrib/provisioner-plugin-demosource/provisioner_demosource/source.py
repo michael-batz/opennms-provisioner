@@ -1,9 +1,7 @@
 """
-opennms-provisioner custom source module
+demo plugin: custom source module for opennms-provisioner
 
-This module is the place for the implementation of custom sources
-which are not part of opennms-provisioner. Simply inherit from
-class source.Source. Please see DummySource for an example
+This is an example plugin for the implementation of a custom source
 
 :license: MIT, see LICENSE for more details
 :copyright: (c) 2018 by Michael Batz, see AUTHORS for more details
@@ -11,8 +9,8 @@ class source.Source. Please see DummySource for an example
 import provisioner.source
 import provisioner.opennms
 
-class DummySource(provisioner.source.Source):
-    """ Dummy source.
+class DemoSource(provisioner.source.Source):
+    """ Demo source.
 
     This is source is a test and demonstrates the implementation
     of an own source. It exports two test nodes.
@@ -40,7 +38,7 @@ class DummySource(provisioner.source.Source):
         node_1.add_service("127.0.0.1", "SNMP")
         node_1.add_asset("city", "Fulda")
         node_1.add_asset("zip", "36041")
-        node_1.add_category("Test")
+        node_1.add_category("DemoSource")
         if cat1:
             node_1.add_category(cat1)
         if cat2:
@@ -51,7 +49,7 @@ class DummySource(provisioner.source.Source):
         node_2.add_interface("127.0.0.1")
         node_2.add_asset("city", "Fulda")
         node_2.add_asset("zip", "36041")
-        node_2.add_category("Test")
+        node_2.add_category("DemoSource")
         if cat1:
             node_2.add_category(cat1)
         if cat2:
