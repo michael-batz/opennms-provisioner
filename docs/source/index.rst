@@ -1,20 +1,13 @@
-opennms-provisioner
-====================
+.. include:: ../../README.rst
 
+
+Content
+=======
 .. toctree::
     :maxdepth: 2
-    :caption: Contents:
 
-    concept
-    setup
-    config
-    run
-    plugin
+    userguide/index
+    devguide/index
+    apidoc/modules
 
 
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
