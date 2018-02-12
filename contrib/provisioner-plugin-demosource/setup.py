@@ -10,11 +10,16 @@ import setuptools
 
 setuptools.setup(
     name="provisioner-plugin-demosource",
-    version="master",
+    version="1.0.0",
     packages=setuptools.find_packages(),
 
     # meta information
     author="Michael Batz",
     url="https://github.com/michael-batz/opennms-provisioner",
     license="MIT"
+
+    # requirements
+    install_requires=[
+        "opennms-provisioner"
+    ],
 )

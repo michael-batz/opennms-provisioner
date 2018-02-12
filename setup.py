@@ -10,7 +10,7 @@ import setuptools
 
 setuptools.setup(
     name="opennms-provisioner",
-    version="master",
+    version="1.0.0dev1",
     packages=setuptools.find_packages(),
 
     # meta information
@@ -23,8 +23,7 @@ setuptools.setup(
 
     # requirements
     install_requires=[
-        "requests==2.18.4",
-        "pyvmomi==6.5.0.2017.5.post1"
+        "requests>=2.0.0"
     ],
 
     # install scripts
