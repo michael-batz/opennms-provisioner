@@ -5,9 +5,9 @@
 ###############################################################
 
 # set environment variables
-BIN_PYTHON=python3
-BIN_SPHINX=sphinx-build
-BIN_PIP=pip3
+BIN_PYTHON=@PYTHON3_BIN@
+BIN_SPHINX=@SPHINX_BIN@
+BIN_PIP=@PIP3_BIN@
 DIR_TEMP="./temp"
 DIR_BUILD="./target"
 DIR_WHEEL_BUILD="${DIR_BUILD}/wheel"
